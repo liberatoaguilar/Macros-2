@@ -1,12 +1,14 @@
-import { ref, computed } from 'vue';
-import { mockDailyLogs } from '../data/mockData';
-import { useFoods } from './useFoods'; // Assuming you might need food details
-import { useRecipes } from './useRecipes'; // Import recipes composable
+import { ref, computed, onMounted, watch } from 'vue';
+import { useFoods } from './useFoods';
+import { useRecipes } from './useRecipes';
+
+const DAILY_LOG_STORAGE_KEY = 'macrosDailyLogs';
 
 // Daily logs keyed by date (YYYY-MM-DD)
-const dailyLogs = ref(mockDailyLogs);
+// Initialize with empty object, will be populated on mount
+const dailyLogs = ref({});
 const { getFoodById } = useFoods();
-const { getRecipeById } = useRecipes(); // Get recipe finder
+const { getRecipeById } = useRecipes();
 
 // Helper to get today's date string
 function getTodayDateString() {
@@ -17,7 +19,43 @@ function getTodayDateString() {
   return `${year}-${month}-${day}`;
 }
 
+// Function to remove an item by index from a specific date's log
+function removeItemByIndex(dateStr, index) {
+    if (dailyLogs.value[dateStr] && dailyLogs.value[dateStr][index] !== undefined) {
+        dailyLogs.value[dateStr].splice(index, 1);
+        console.log(`Item at index ${index} removed from log for ${dateStr}.`);
+        // Watcher handles persistence
+    } else {
+        console.warn(`Could not remove item at index ${index} for date ${dateStr}.`);
+    }
+}
+
 export function useDailyLog() {
+
+  // Load daily logs from localStorage on component mount (client-side)
+  onMounted(() => {
+    if (process.client) { // Ensure this runs only on the client
+        const storedLogs = localStorage.getItem(DAILY_LOG_STORAGE_KEY);
+        if (storedLogs) {
+            try {
+                dailyLogs.value = JSON.parse(storedLogs);
+            } catch (e) {
+                console.error('Error parsing daily logs data from localStorage:', e);
+                dailyLogs.value = {}; // Fallback to empty object
+            }
+        } else {
+            dailyLogs.value = {}; // Initialize with empty object if nothing stored
+        }
+    }
+  });
+
+  // Watch for changes in dailyLogs object and save to localStorage
+  watch(dailyLogs, (newLogsValue) => {
+    if (process.client) { // Ensure this runs only on the client
+      localStorage.setItem(DAILY_LOG_STORAGE_KEY, JSON.stringify(newLogsValue));
+      console.log('Daily logs data saved to localStorage');
+    }
+  }, { deep: true }); // Use deep watch for object mutations
 
   const todayDateString = computed(() => getTodayDateString());
 
@@ -31,10 +69,9 @@ export function useDailyLog() {
     if (!dailyLogs.value[dateStr]) {
       dailyLogs.value[dateStr] = [];
     }
-    // In a real app, you'd add more details, maybe a unique log entry ID
     dailyLogs.value[dateStr].push(item);
     console.log(`Item added to log for ${dateStr}:`, item);
-    // Persist changes if needed
+    // Watcher handles persistence
   };
 
   // Calculate total macros for a specific date
@@ -98,7 +135,6 @@ export function useDailyLog() {
   // Computed property for today's total macros
   const todayMacros = computed(() => getMacrosForDate(todayDateString.value));
 
-
   return {
     dailyLogs,
     todayLog,
@@ -107,20 +143,8 @@ export function useDailyLog() {
     addItemToLog,
     getMacrosForDate,
     todayDateString,
-    // Expose the removal function, wrapping it slightly
     removeItemFromLog: (index, dateStr = todayDateString.value) => {
         removeItemByIndex(dateStr, index);
     },
   };
-}
-
-// Function to remove an item by index from a specific date's log
-function removeItemByIndex(dateStr, index) {
-    if (dailyLogs.value[dateStr] && dailyLogs.value[dateStr][index] !== undefined) {
-        dailyLogs.value[dateStr].splice(index, 1);
-        console.log(`Item at index ${index} removed from log for ${dateStr}.`);
-        // Persist changes if needed
-    } else {
-        console.warn(`Could not remove item at index ${index} for date ${dateStr}.`);
-    }
 } 
