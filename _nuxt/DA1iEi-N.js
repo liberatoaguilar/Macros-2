@@ -1,0 +1,1 @@
+import{a as r}from"./DBXBctZE.js";import{r as s}from"./CgvBBkVD.js";const e=s(r);function p(){return{user:e,updateUserGoals:o=>{e.value={...e.value,...o},console.log("User goals updated:",e.value)},updateUserProfile:o=>{e.value={...e.value,...o},console.log("User profile updated:",e.value)}}}export{p as u};
