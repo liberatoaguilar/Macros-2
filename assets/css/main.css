@@ -1,0 +1,6 @@
+/* Set global base styles */
+html {
+  background-color: #000; /* Black background */
+  /* Optionally, you can set default text color here too */
+  /* color: #f3f4f6; /* Example: text-gray-100 */
+}
