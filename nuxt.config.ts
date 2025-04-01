@@ -8,4 +8,10 @@ export default defineNuxtConfig({
   css: [
     '~/assets/css/main.css',
   ],
+  nitro: {
+    preset: 'static',
+  },
+  app: {
+    baseURL: process.env.NUXT_PUBLIC_BASE_URL || '/',
+  }
 })
