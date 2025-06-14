@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { getFoods, getMeals, saveMeals, type Food } from '@/lib/db'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 
 const foods = ref<Food[]>([])
 const query = ref('')
@@ -33,12 +35,12 @@ onMounted(() => {
 <template>
   <div>
     <h1 class="text-xl font-bold mb-4">Meal Logging</h1>
-    <input v-model="query" placeholder="Search foods" class="border p-2 mb-4 w-full" />
+    <Input v-model="query" placeholder="Search foods" class="mb-4 w-full" />
     <ul>
       <li v-for="food in results" :key="food.food_id" class="mb-2 flex items-center gap-2">
         <span class="flex-1">{{ food.name }}</span>
-        <input type="number" min="1" v-model.number="quantities[food.food_id]" class="w-16 border p-1" />
-        <button @click="addToLog(food)" class="bg-primary text-white px-2 py-1 rounded">Add</button>
+        <Input type="number" min="1" v-model.number="quantities[food.food_id]" class="w-16" />
+        <Button @click="addToLog(food)">Add</Button>
       </li>
     </ul>
   </div>

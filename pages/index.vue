@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import type { User } from '@/lib/db'
 import { getUsers } from '@/lib/db'
+import { Button } from '@/components/ui/button'
 
 const user = ref<User | null>(null)
 const progress = ref(0)
@@ -20,7 +21,7 @@ onMounted(() => {
       <div class="w-full bg-muted rounded h-3 overflow-hidden mb-4">
         <div class="bg-primary h-full" :style="{ width: progress + '%' }"></div>
       </div>
-      <NuxtLink to="/meal-logging" class="text-primary underline">Log a meal</NuxtLink>
+      <Button as="NuxtLink" to="/meal-logging" class="mt-2">Log a meal</Button>
     </div>
   </div>
 </template>
