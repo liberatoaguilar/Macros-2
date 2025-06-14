@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { Menu as MenuIcon, X as CloseIcon } from 'lucide-vue-next'
+import LogDialog from '@/components/LogDialog.vue'
 
 const mobileOpen = ref(false)
+const logsOpen = ref(false)
 </script>
 
 <template>
@@ -23,6 +25,7 @@ const mobileOpen = ref(false)
           <NuxtLink to="/calendar-history" class="hover:underline">Calendar</NuxtLink>
           <NuxtLink to="/foods-recipes" class="hover:underline">Foods</NuxtLink>
           <NuxtLink to="/profile-settings" class="hover:underline">Profile</NuxtLink>
+          <button @click="logsOpen = true" class="hover:underline">Logs</button>
         </nav>
       </div>
       <nav
@@ -42,11 +45,15 @@ const mobileOpen = ref(false)
           <li>
             <NuxtLink @click="mobileOpen = false" to="/profile-settings" class="block py-1">Profile</NuxtLink>
           </li>
+          <li>
+            <button @click="mobileOpen = false; logsOpen = true" class="block py-1 w-full text-left">Logs</button>
+          </li>
         </ul>
       </nav>
     </header>
     <main class="p-4 max-w-md mx-auto">
       <NuxtPage />
     </main>
+    <LogDialog v-model="logsOpen" />
   </div>
 </template>
