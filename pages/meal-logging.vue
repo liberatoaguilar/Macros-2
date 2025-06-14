@@ -3,6 +3,7 @@ import { ref, onMounted, computed } from 'vue'
 import { getFoods, getMeals, saveMeals, type Food } from '@/lib/db'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+const { $logger } = useNuxtApp()
 
 const foods = ref<Food[]>([])
 const query = ref('')
@@ -23,6 +24,7 @@ function addToLog(food: Food) {
     items: [{ type: 'food', id: food.food_id, quantity: qty }]
   })
   saveMeals(meals)
+  $logger.log('meal-added', { food: food.name, quantity: qty })
   quantities.value[food.food_id] = 1
 }
 
