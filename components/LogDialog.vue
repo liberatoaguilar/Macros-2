@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { Button } from '@/components/ui/button'
-import { getLogs, clearLogs, LogEntry } from '@/lib/logger'
+import type { LogEntry } from '@/lib/logger'
+import { getLogs, clearLogs } from '@/lib/logger'
 
 const props = defineProps<{ modelValue: boolean }>()
 const emit = defineEmits(['update:modelValue'])
